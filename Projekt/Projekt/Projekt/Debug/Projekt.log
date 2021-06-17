@@ -1,0 +1,4 @@
+﻿  Projekt.cpp
+D:\Users\michr\source\repos\polsl-aei-pk2\0999ace0-gr61-repo\Projekt\Projekt\Projekt\Projekt.cpp(309,17): warning C4101: 'previous': unreferenced local variable
+D:\Users\michr\source\repos\polsl-aei-pk2\0999ace0-gr61-repo\Projekt\Projekt\Projekt\Projekt.cpp(485,9): warning C4101: 'score_main': unreferenced local variable
+  Projekt.vcxproj -> D:\Users\michr\source\repos\polsl-aei-pk2\0999ace0-gr61-repo\Projekt\Projekt\Debug\Projekt.exe
