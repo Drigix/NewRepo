@@ -16,9 +16,9 @@ Tree<T>::~Tree()
 template<class T>
 Node<T>* Tree<T>::getRoot(T key)
 {
-	if (root==nullptr)
+	if (root == nullptr)
 	{
-		root = new Node<T>;
+		root = new Node<T>(NULL);
 		root->setKey(key);
 		root->setLeft(NULL);
 		root->setRight(NULL);
@@ -37,7 +37,7 @@ void Tree<T>::setRoot(Node<T>* leaf)
 template<class T>
 void Tree<T>::insert(T key, Node<T>& leaf)
 {
-	
+
 	if (key < leaf.getKey())
 	{
 		if (leaf.getLeft() != NULL)
@@ -46,7 +46,7 @@ void Tree<T>::insert(T key, Node<T>& leaf)
 		}
 		else
 		{
-			leaf.setLeft(new Node<T>);
+			leaf.setLeft(new Node<T>(&leaf));
 			leaf.getLeft()->setKey(key);
 			leaf.getLeft()->setLeft(NULL);
 			leaf.getLeft()->setRight(NULL);
@@ -60,13 +60,13 @@ void Tree<T>::insert(T key, Node<T>& leaf)
 		}
 		else
 		{
-			leaf.setRight(new Node<T>);
+			leaf.setRight(new Node<T>(&leaf));
 			leaf.getRight()->setKey(key);
 			leaf.getRight()->setLeft(NULL);
 			leaf.getRight()->setRight(NULL);
 		}
 	}
-		
+
 }
 
 //Delete
@@ -83,7 +83,7 @@ void Tree<T>::deleteTree(Node<T>* leaf)
 }
 
 template<class T>
-Node<T>* Tree<T>::findMininumValue(Node<T>*leaf)
+Node<T>* Tree<T>::findMininumValue(Node<T>* leaf)
 {
 	Node<T>* temp = leaf;
 	while (temp && temp->getLeft() != NULL)
@@ -110,30 +110,52 @@ void Tree<T>::deleteElement(T key, Node<T>* leaf)
 	}
 	else
 	{
-		if (leaf->getLeft() == NULL && leaf->getRight() == NULL)
+		bool isLeft = leaf->getLeft() != NULL;
+		bool isRight = leaf->getRight() != NULL;
+
+		if (!isLeft && !isRight)
 		{
 			delete leaf;
-			leaf = NULL;
+			return;
 		}
-		else if (leaf->getLeft() == NULL)
-		{
-			Node<T>* temp = leaf;
-			leaf = leaf->getRight();
-			delete temp;
-		}
-		else if (leaf->getRight() == NULL)
-		{
-			Node<T>* temp = leaf;
-			leaf = leaf->getLeft();
-			delete temp;
-		}
-		else
-		{
+
+		if (isLeft && isRight) {
 			Node<T>* temp = findMininumValue(leaf->getRight());
-			leaf->setKey(temp->getKey());
-			deleteElement(temp->getKey(), leaf->getRight());
-			delete temp;
+
+			if (leaf->getParent()->getKey() > leaf->getKey()) {
+				leaf->getParent()->setLeft(temp);
+			}
+			else {
+				leaf->getParent()->setRight(temp);
+			}
+			temp->setLeft(leaf->getLeft());
+
+			leaf->clear();
+			delete leaf;
+			return;
 		}
+
+		if (!isLeft) {
+			if (leaf->getParent()->getKey() > leaf->getKey()) {
+				leaf->getParent()->setLeft(leaf->getRight());
+			}
+			else {
+				leaf->getParent()->setRight(leaf->getRight());
+			}
+			leaf->clear();
+			delete leaf;
+			return;
+		}
+
+		if (leaf->getParent()->getKey() > leaf->getKey()) {
+			leaf->getParent()->setLeft(leaf->getLeft());
+		}
+		else {
+			leaf->getParent()->setRight(leaf->getLeft());
+		}
+		leaf->clear();
+		delete leaf;
+		return;
 	}
 }
 
@@ -176,7 +198,7 @@ int Tree<T>::returnCountElements(Node<T>* leaf)
 }
 
 template<class T>
-int Tree<T>::countElements(Node<T>* leaf,int& elements)
+int Tree<T>::countElements(Node<T>* leaf, int& elements)
 {
 	if (leaf != NULL)
 	{
